@@ -90,6 +90,7 @@ static void wifi_switch_init(void){
 	printf("[SYSTEM] Starting WiFi SWITCH task\r\n");
 	extern void task_wifi_switch(void *pvParameters);
 	
+	 
 	xTaskCreateStatic(
 		task_wifi_switch, 
 		(char*)"wifi_switch", 
