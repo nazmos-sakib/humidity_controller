@@ -16,7 +16,7 @@
 #define LED_B_PIN 11
 
 //switch
-#define SWITCH_PIN 3
+#define SWITCH_PIN 1
 
 // define outputs
 #define ON 1 // high voltage
@@ -36,6 +36,7 @@ void task_wifi_switch(void *pvParameters)
   
   // define LEDs as outputs
   bl_gpio_enable_output(LED_G_PIN, DISABLE_PULLUP, DISABLE_PULLDOWN);
+  bl_gpio_enable_output(LED_R_PIN, DISABLE_PULLUP, DISABLE_PULLDOWN);
   bl_gpio_enable_input(SWITCH_PIN, DISABLE_PULLUP, ENABLE_PULLDOWN);
 
 
@@ -52,23 +53,32 @@ void task_wifi_switch(void *pvParameters)
   while (1) {
     printf("new loop: \r\n");
 
-     pin_return = bl_gpio_input_get(SWITCH_PIN, & pin_return_value);
-     printf("GPIO%d val is %s\r\n",
-       SWITCH_PIN,
-       0 == pin_return ? (pin_return_value ? "high" : "low") : "Err"
-      );
+    pin_return = bl_gpio_input_get(SWITCH_PIN, & pin_return_value);
+    
+    // print switch status
+    printf("GPIO%d val is %s\r\n",
+     SWITCH_PIN,
+     0 == pin_return ? (pin_return_value ? "high" : "low") : "Err"
+     );
 
 
-     if (pin_return == 0 && pin_return_value){
-          if (isOn){
-            bl_gpio_output_set(LED_G_PIN, ON);
-            isOn = !isOn;
-          } else{
-            bl_gpio_output_set(LED_G_PIN, OFF);
-            isOn = !isOn;
-          }
-     } 
-     
+    if (pin_return == 0 && pin_return_value){
+      vTaskDelay(10 / portTICK_PERIOD_MS);
+      pin_return = bl_gpio_input_get(SWITCH_PIN, & pin_return_value);
+      if (pin_return == 0 && pin_return_value){
+       if (isOn){
+        bl_gpio_output_set(LED_G_PIN, ON);
+        bl_gpio_output_set(LED_R_PIN, OFF);
+        isOn = !isOn;
+      } else{
+        bl_gpio_output_set(LED_G_PIN, OFF);
+        bl_gpio_output_set(LED_R_PIN, ON);
+        isOn = !isOn;
+      }
+    }
+
+  } 
+
    /*
     if (counter & 0x1) {
       bl_gpio_output_set(LED_R_PIN, LED_ON);
@@ -77,12 +87,12 @@ void task_wifi_switch(void *pvParameters)
       bl_gpio_output_set(LED_R_PIN, LED_OFF);
     }
    */ 
-    
-    
+
+
     // wait for 1s
-    vTaskDelay(1000 / portTICK_PERIOD_MS);
-  }
-  
+  vTaskDelay(1000 / portTICK_PERIOD_MS);
+}
+
   // should never happen but would delete the task and free allocated resources
-  vTaskDelete(NULL);
+vTaskDelete(NULL);
 }
