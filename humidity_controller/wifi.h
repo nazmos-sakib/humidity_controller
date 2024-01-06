@@ -6,7 +6,7 @@
 #define WIFI_PW "12345678"
 
 // Set wifi mode
-#define WIFI_MODE_AP 1
-#define WIFI_MODE_STA 2
-#define WIFI_MODE_PINECONE WIFI_MODE_STA
+// #define WIFI_MODE_AP 1
+// #define WIFI_MODE_STA 2
+// #define WIFI_MODE_PINECONE WIFI_MODE_STA
 #endif
