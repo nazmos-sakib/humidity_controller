@@ -32,66 +32,75 @@
 /* LED task */
 void task_wifi_switch(void *pvParameters)
 {
-  printf("LED task started\r\n");
-  
-  // define LEDs as outputs
-  bl_gpio_enable_output(LED_G_PIN, DISABLE_PULLUP, DISABLE_PULLDOWN);
-  bl_gpio_enable_output(LED_R_PIN, DISABLE_PULLUP, DISABLE_PULLDOWN);
-  bl_gpio_enable_input(SWITCH_PIN, DISABLE_PULLUP, ENABLE_PULLDOWN);
-
-
-  uint8_t pin_return_value = 0;
-  
-  // wait for 100ms
-  vTaskDelay(100 / portTICK_PERIOD_MS);
-  
-
-  int pin_return;
-  bool isOn = false;
-  bl_gpio_output_set(LED_G_PIN, OFF);
-
-  while (1) {
-    printf("new loop: \r\n");
-
-    pin_return = bl_gpio_input_get(SWITCH_PIN, & pin_return_value);
+    printf("LED task started\r\n");
     
-    // print switch status
-    printf("GPIO%d val is %s\r\n",
-     SWITCH_PIN,
-     0 == pin_return ? (pin_return_value ? "high" : "low") : "Err"
-     );
+    // define LEDs as outputs
+    bl_gpio_enable_output(LED_G_PIN, DISABLE_PULLUP, DISABLE_PULLDOWN);
+    bl_gpio_enable_output(LED_R_PIN, DISABLE_PULLUP, DISABLE_PULLDOWN);
+    bl_gpio_enable_input(SWITCH_PIN, ENABLE_PULLUP, ENABLE_PULLDOWN );
 
 
-    if (pin_return == 0 && pin_return_value){
-      vTaskDelay(10 / portTICK_PERIOD_MS);
+    uint8_t pin_return_value = 0;
+    
+    // wait for 100ms
+    vTaskDelay(100 / portTICK_PERIOD_MS);
+    
+
+    int pin_return;
+    bool isWifiOn = true;
+    //bl_gpio_output_set(LED_G_PIN, OFF);
+
+    while (1) {
+      //printf("new loop: \r\n");
+
       pin_return = bl_gpio_input_get(SWITCH_PIN, & pin_return_value);
+      
+      // print switch status
+      /*printf("GPIO%d val is %s\r\n",
+       SWITCH_PIN,
+       0 == pin_return ? (pin_return_value ? "high" : "low") : "Err"
+       );*/
+
+
       if (pin_return == 0 && pin_return_value){
-       if (isOn){
-        bl_gpio_output_set(LED_G_PIN, ON);
-        bl_gpio_output_set(LED_R_PIN, OFF);
-        isOn = !isOn;
-      } else{
-        bl_gpio_output_set(LED_G_PIN, OFF);
-        bl_gpio_output_set(LED_R_PIN, ON);
-        isOn = !isOn;
-      }
-    }
+          vTaskDelay(10 / portTICK_PERIOD_MS);
+          //conforming switch press again
+          pin_return = bl_gpio_input_get(SWITCH_PIN, & pin_return_value);
+          if (pin_return == 0 && pin_return_value){
 
-  } 
-
-   /*
-    if (counter & 0x1) {
-      bl_gpio_output_set(LED_R_PIN, LED_ON);
-      vTaskDelay(2000 / portTICK_PERIOD_MS);
-    } else {
-      bl_gpio_output_set(LED_R_PIN, LED_OFF);
-    }
-   */ 
+            if (isWifiOn){ //wifi need to be turn on
+              printf("wifi turning on\r\n");
 
 
-    // wait for 1s
-  vTaskDelay(1000 / portTICK_PERIOD_MS);
-}
+
+
+
+              bl_gpio_output_set(LED_G_PIN, ON);
+              bl_gpio_output_set(LED_R_PIN, OFF);
+              isWifiOn = !isWifiOn;
+            } else{ //wifi need to be turn off
+              printf("wifi turning off\r\n");
+
+
+
+
+
+            bl_gpio_output_set(LED_G_PIN, OFF);
+            bl_gpio_output_set(LED_R_PIN, ON);
+            isWifiOn = !isWifiOn;
+          }
+
+
+          vTaskDelay(1000 / portTICK_PERIOD_MS);
+
+        }
+
+      } 
+
+
+      // wait for 1s
+    vTaskDelay(100 / portTICK_PERIOD_MS);
+  }
 
   // should never happen but would delete the task and free allocated resources
 vTaskDelete(NULL);

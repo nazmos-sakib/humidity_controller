@@ -50,8 +50,3 @@ endif
 
 #blog enable components format :=blog_testc cli vfs helper
 LOG_ENABLED_COMPONENTS:=blog_testc hal_drv loopset looprt bloop
-
-CFLAGS += -DLWIP_HTTPD_CUSTOM_FILES=1
-CFLAGS += -DLWIP_HTTPD_DYNAMIC_HEADERS=1
-CFLAGS += -DLWIP_HTTPD_CGI=1
-

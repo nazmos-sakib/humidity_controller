@@ -57,7 +57,8 @@ void bfl_main(void)
   system_init();
   /* Start tasks */
 
-
+	//wifi switch
+ 	wifi_switch_init();
   
 
   /* Start TCP/IP stack */
